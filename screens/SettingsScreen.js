@@ -1,3 +1,5 @@
+//deze pagina is voor het instellen van de regio en het schooljaar, met een knop om gps te gebruiken voor regio detectie
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Picker } from '@react-native-picker/picker';
 import * as Location from 'expo-location';
@@ -5,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { Alert, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native';
 
 export default function SettingsScreen({ navigation }) {
+    // width en height voor landscape.
     const { width, height } = useWindowDimensions();
     const isLandscape = width > height;
 
@@ -17,6 +20,7 @@ export default function SettingsScreen({ navigation }) {
 
     const loadSettings = async () => {
         try {
+            //haal regio en schooljaar op uit asyncstorage
             const savedRegion = await AsyncStorage.getItem('region');
             const savedYear = await AsyncStorage.getItem('schoolYear');
 
@@ -26,7 +30,7 @@ export default function SettingsScreen({ navigation }) {
             console.error('Error loading settings:', error);
         }
     };
-
+//vraagt toestemming voor locatie en haalt regio op basis van breedtegraad
     const handleGPS = async () => {
         try {
             let { status } = await Location.requestForegroundPermissionsAsync();
@@ -37,7 +41,7 @@ export default function SettingsScreen({ navigation }) {
 
             let location = await Location.getCurrentPositionAsync({});
             const latitude = location.coords.latitude;
-
+//alas je latitude groter dan 52.5 is dan noord, anders als groter dan 51.5 midden anders zuid
             let detectedRegion;
             if (latitude > 52.5) {
                 detectedRegion = 'noord';
@@ -54,7 +58,7 @@ export default function SettingsScreen({ navigation }) {
             console.error('GPS Error:', error);
         }
     };
-
+//slaat regio en schooljaar op in asyncstorage
     const handleSave = async () => {
         try {
             await AsyncStorage.setItem('region', region);

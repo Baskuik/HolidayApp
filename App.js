@@ -2,7 +2,6 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-
 import OverzichtScreen from './screens/OverzichtScreen';
 import CountdownScreen from './screens/CountdownScreen';
 import SettingsScreen from './screens/SettingsScreen';
@@ -12,6 +11,7 @@ const Tab = createBottomTabNavigator();
 
 export default function App() {
   return (
+    //Navigationcontainer dit zorgt voor de wrappeng van de navigatie, zodat je kan switchen tussen schermen, voor de styling van tabs zoals icons kleuren etc.
     <NavigationContainer>
       <Tab.Navigator
         screenOptions={({ route }) => ({

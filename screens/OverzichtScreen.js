@@ -1,17 +1,23 @@
+//Deze pagina toont een overzicht van schoolvakanties op basis van de regio en het schooljaar die zijn opgeslagen in de asyncstorage.
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 
 export default function OverzichtScreen({ navigation }) {
+    // widht en height voor landscape.
     const { width, height } = useWindowDimensions();
     const isLandscape = width > height;
-
+    //array voor vakanties ophalen API.
     const [holidays, setHolidays] = useState([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
+    //Geselecteerde regio standard is midden.
     const [region, setRegion] = useState('midden');
+    //geselecteerde schooljaar standard is 2025-2026.
     const [schoolYear, setSchoolYear] = useState('2025-2026');
 
+    //laad instellingen bij het laden van het scherm.
     useEffect(() => {
         loadSettings();
     }, []);
@@ -25,19 +31,22 @@ export default function OverzichtScreen({ navigation }) {
 
     const loadSettings = async () => {
         try {
+            //haal regio en schooljaar op uit asyncstorage
             const savedRegion = await AsyncStorage.getItem('region');
             const savedYear = await AsyncStorage.getItem('schoolYear');
 
+            //als er een regio of schooljaar is opgeslagen gebruik die dan
             if (savedRegion) setRegion(savedRegion);
             if (savedYear) setSchoolYear(savedYear);
 
+            //haal vakanties op met de opgeslagen of standaard regio en schooljaar
             await fetchHolidays(savedRegion || region, savedYear || schoolYear);
         } catch (error) {
             console.error('Error loading settings:', error);
             await fetchHolidays(region, schoolYear);
         }
     };
-
+//functie om vakanties op te halen van de Rijksoverheid API
     const fetchHolidays = async (currentRegion, currentYear, retries = 3) => {
         try {
             setLoading(true);
@@ -117,7 +126,7 @@ export default function OverzichtScreen({ navigation }) {
         setRefreshing(true);
         loadSettings();
     };
-
+//telt hvl dagen tot de vakantie
     const calculateDays = (startDate, endDate) => {
         const start = new Date(startDate);
         const end = new Date(endDate);
@@ -125,13 +134,13 @@ export default function OverzichtScreen({ navigation }) {
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
         return diffDays;
     };
-
+//maakt datums beter inplaats van 2025-01-01 naar 1 jan 2025
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         const options = { day: 'numeric', month: 'short', year: 'numeric' };
         return date.toLocaleDateString('nl-NL', options);
     };
-
+//maakt kaartje voor elke vakantie in de lijst
     const renderHolidayCard = ({ item }) => {
         const days = calculateDays(item.startdate, item.enddate);
 

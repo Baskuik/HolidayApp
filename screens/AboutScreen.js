@@ -1,6 +1,9 @@
+//deze pagina toont informatie over mezelf en de app.
+
 import { Image, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 
 export default function AboutScreen() {
+    // width en height voor landscape.
     const { width, height } = useWindowDimensions();
     const isLandscape = width > height;
 
@@ -8,12 +11,13 @@ export default function AboutScreen() {
         <ScrollView style={styles.container}>
             <View style={[styles.content, isLandscape && styles.contentLandscape]}>
                 <View style={[styles.photoContainer, isLandscape && styles.photoContainerLandscape]}>
+                    {/*mijn selfie*/}
                     <Image
                         source={require('../assets/images/selfie.jpg')}
                         style={styles.photo}
                     />
                 </View>
-
+        {/*de tekst*/}
                 <Text style={styles.name}>Bas Kuik</Text>
 
                 <Text style={styles.role}>Ontwikkelaar</Text>
