@@ -4,9 +4,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 
-//CountdownScreen toont de countdown tot de volgende vakantie op basis van de regio en het schooljaar die zijn opgeslagen in de asyncstorage.
 export default function CountdownScreen({ navigation, route }) {
-    // widht en height voor landscape.
+    //haalt schermbreedte op via usedWindowDimensions om te bepalen of het scherm in landschap of normale modus is.
     const { width, height } = useWindowDimensions();
     const isLandscape = width > height;
     const [nextHoliday, setNextHoliday] = useState(null);
@@ -18,8 +17,8 @@ export default function CountdownScreen({ navigation, route }) {
     useEffect(() => {
         loadDataAndCalculate();
     }, [route?.params?.holiday]);
-//haalt regio en schooljaar op uit asycnstorage en rekent dagen tot volgende vakantie (vandaag - startdatum = aantaldagen)
-//checkt of er een vakantie is doorgegeven via route.params of asyncstorage anders haalt die de eerst volgende vakantie op via de API
+    //haalt regio en schooljaar op uit asycnstorage en rekent dagen tot volgende vakantie (vandaag - startdatum = aantaldagen)
+    //checkt of er een vakantie is doorgegeven via route.params of asyncstorage anders haalt die de eerst volgende vakantie op via de API
     const loadDataAndCalculate = async () => {
         try {
             setLoading(true);
@@ -33,6 +32,7 @@ export default function CountdownScreen({ navigation, route }) {
             setRegion(currentRegion);
             setSchoolYear(currentYear);
 
+            //checkt of vakantie is aangeklikt in overzicht scherm dan gebruikt die die.
             const passedHoliday = route?.params?.holiday;
             if (passedHoliday) {
                 console.log('Using passed holiday from route.params:', JSON.stringify(passedHoliday));
@@ -46,6 +46,7 @@ export default function CountdownScreen({ navigation, route }) {
                 return;
             }
 
+            //als er geen opgeslagen vakanties uit eerdere sessie zijn, haal dan de eerst volgende vakantie op via de API.
             try {
                 const stored = await AsyncStorage.getItem('selectedHoliday_v1');
                 if (stored) {
@@ -133,7 +134,7 @@ export default function CountdownScreen({ navigation, route }) {
             setLoading(false);
         }
     };
-//geeft een emoji terug op basis van het type vakantie
+    //geeft een emoji terug op basis van het type vakantie
     const getSeasonEmoji = (type) => {
         if (type.toLowerCase().includes('herfst')) return '🍂';
         if (type.toLowerCase().includes('kerst')) return '🎄';
@@ -142,7 +143,7 @@ export default function CountdownScreen({ navigation, route }) {
         if (type.toLowerCase().includes('zomer')) return '☀️';
         return '📅';
     };
-//maakt datums beter inplaats van 2025-01-01 naar 1 jan 2025
+    //maakt datums beter inplaats van 2025-01-01 naar 1 jan 2025
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         const options = { day: 'numeric', month: 'long', year: 'numeric' };
@@ -158,6 +159,7 @@ export default function CountdownScreen({ navigation, route }) {
         );
     }
 
+    //als er geen volgende vakantie is gevonden toon dan een bericht
     if (!nextHoliday) {
         return (
             <View style={styles.container}>

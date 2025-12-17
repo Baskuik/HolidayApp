@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 
 export default function OverzichtScreen({ navigation }) {
-    // widht en height voor landscape.
+    //haalt schermbreedte op via usedWindowDimensions om te bepalen of het scherm in landschap of normale modus is.
     const { width, height } = useWindowDimensions();
     const isLandscape = width > height;
     //array voor vakanties ophalen API.
@@ -23,7 +23,9 @@ export default function OverzichtScreen({ navigation }) {
     }, []);
 
     useEffect(() => {
+        //registreerd een listener die aangaat wnr je naar dit scherm gaat.
         const unsubscribe = navigation?.addListener('focus', () => {
+            //laad instellingen regio en schooljaar opnieuw uit asyncstorage.
             loadSettings();
         });
         return unsubscribe;
@@ -46,7 +48,7 @@ export default function OverzichtScreen({ navigation }) {
             await fetchHolidays(region, schoolYear);
         }
     };
-//functie om vakanties op te halen van de Rijksoverheid API
+    //functie om vakanties op te halen van de Rijksoverheid API
     const fetchHolidays = async (currentRegion, currentYear, retries = 3) => {
         try {
             setLoading(true);
@@ -56,7 +58,7 @@ export default function OverzichtScreen({ navigation }) {
 
             let response;
             let lastError;
-
+            //probeert api aanroep maximaal 3x bij fout
             for (let i = 0; i < retries; i++) {
                 try {
                     response = await fetch(url, {
@@ -90,6 +92,8 @@ export default function OverzichtScreen({ navigation }) {
             console.log('Data received successfully');
             console.log('Total vacations in API:', data.content[0].vacations.length);
 
+            //filtert alleen de vakanties voor de geselecteerde regio
+            //of heel voor landelijke vakanties zoals mei vakantie
             const transformedHolidays = [];
             data.content[0].vacations.forEach(vacation => {
                 vacation.regions.forEach(regionData => {
@@ -109,12 +113,15 @@ export default function OverzichtScreen({ navigation }) {
                 console.log('First holiday:', JSON.stringify(transformedHolidays[0]));
             }
 
+            //sorteer vakanties op startdatum
             transformedHolidays.sort((a, b) => new Date(a.startdate) - new Date(b.startdate));
 
+            //slaat gestoorte vakanties op 
             setHolidays(transformedHolidays);
         } catch (error) {
             console.error('Error fetching holidays:', error);
             console.error('Full error:', JSON.stringify(error));
+            //lege lijst wnr er een fout is
             setHolidays([]);
         } finally {
             setLoading(false);
@@ -126,7 +133,7 @@ export default function OverzichtScreen({ navigation }) {
         setRefreshing(true);
         loadSettings();
     };
-//telt hvl dagen tot de vakantie
+    //telt hvl dagen tot de vakantie
     const calculateDays = (startDate, endDate) => {
         const start = new Date(startDate);
         const end = new Date(endDate);
@@ -134,13 +141,13 @@ export default function OverzichtScreen({ navigation }) {
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
         return diffDays;
     };
-//maakt datums beter inplaats van 2025-01-01 naar 1 jan 2025
+    //maakt datums beter inplaats van 2025-01-01 naar 1 jan 2025
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         const options = { day: 'numeric', month: 'short', year: 'numeric' };
         return date.toLocaleDateString('nl-NL', options);
     };
-//maakt kaartje voor elke vakantie in de lijst
+    //maakt kaartje voor elke vakantie in de lijst
     const renderHolidayCard = ({ item }) => {
         const days = calculateDays(item.startdate, item.enddate);
 

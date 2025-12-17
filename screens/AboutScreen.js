@@ -3,7 +3,7 @@
 import { Image, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 
 export default function AboutScreen() {
-    // width en height voor landscape.
+    //haalt schermbreedte op via usedWindowDimensions om te bepalen of het scherm in landschap of normale modus is.
     const { width, height } = useWindowDimensions();
     const isLandscape = width > height;
 
@@ -17,7 +17,7 @@ export default function AboutScreen() {
                         style={styles.photo}
                     />
                 </View>
-        {/*de tekst*/}
+                {/*de tekst*/}
                 <Text style={styles.name}>Bas Kuik</Text>
 
                 <Text style={styles.role}>Ontwikkelaar</Text>
@@ -46,8 +46,7 @@ export default function AboutScreen() {
                 </View>
 
                 <Text style={styles.footer}>
-                    Gemaakt voor school opdracht{'\n'}
-                    React Native • Expo
+                    Gemaakt voor school opdracht app development.
                 </Text>
             </View>
         </ScrollView>

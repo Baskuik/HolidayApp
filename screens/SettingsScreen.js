@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import { Alert, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native';
 
 export default function SettingsScreen({ navigation }) {
-    // width en height voor landscape.
+    //haalt schermbreedte op via usedWindowDimensions om te bepalen of het scherm in landschap of normale modus is.
     const { width, height } = useWindowDimensions();
     const isLandscape = width > height;
 
@@ -30,7 +30,7 @@ export default function SettingsScreen({ navigation }) {
             console.error('Error loading settings:', error);
         }
     };
-//vraagt toestemming voor locatie en haalt regio op basis van breedtegraad
+    //vraagt toestemming voor locatie en haalt regio op basis van breedtegraad
     const handleGPS = async () => {
         try {
             let { status } = await Location.requestForegroundPermissionsAsync();
@@ -41,7 +41,7 @@ export default function SettingsScreen({ navigation }) {
 
             let location = await Location.getCurrentPositionAsync({});
             const latitude = location.coords.latitude;
-//alas je latitude groter dan 52.5 is dan noord, anders als groter dan 51.5 midden anders zuid
+            //alas je latitude groter dan 52.5 is dan noord, anders als groter dan 51.5 midden anders zuid
             let detectedRegion;
             if (latitude > 52.5) {
                 detectedRegion = 'noord';
@@ -58,7 +58,7 @@ export default function SettingsScreen({ navigation }) {
             console.error('GPS Error:', error);
         }
     };
-//slaat regio en schooljaar op in asyncstorage
+    //slaat regio en schooljaar op in asyncstorage
     const handleSave = async () => {
         try {
             await AsyncStorage.setItem('region', region);
