@@ -41,6 +41,7 @@ export default function SettingsScreen({ navigation }) {
 
             let location = await Location.getCurrentPositionAsync({});
             const latitude = location.coords.latitude;
+            console.log('Latitude:', latitude);
             //alas je latitude groter dan 52.5 is dan noord, anders als groter dan 51.5 midden anders zuid
             let detectedRegion;
             if (latitude > 52.5) {
